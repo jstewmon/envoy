@@ -154,7 +154,7 @@ CorsPolicyImpl::CorsPolicyImpl(const envoy::api::v2::route::CorsPolicy& config,
     allow_origin_.push_back(origin);
   }
   for (const auto& regex : config.allow_origin_regex()) {
-    allow_origin_regex_.push_back(RegexUtil::parseRegex(regex));
+    //fixfixallow_origin_regex_.push_back(Regex::Utility::parseRegex(regex));
   }
   if (config.has_allow_credentials()) {
     allow_credentials_ = PROTOBUF_GET_WRAPPED_REQUIRED(config, allow_credentials);
@@ -897,7 +897,7 @@ RegexRouteEntryImpl::RegexRouteEntryImpl(const VirtualHostImpl& vhost,
                                          const envoy::api::v2::route::Route& route,
                                          Server::Configuration::FactoryContext& factory_context)
     : RouteEntryImplBase(vhost, route, factory_context),
-      regex_(RegexUtil::parseRegex(route.match().regex())), regex_str_(route.match().regex()) {}
+      regex_(Regex::Utility::parseRegex(route.match().regex())), regex_str_(route.match().regex()) {}
 
 void RegexRouteEntryImpl::rewritePathHeader(Http::HeaderMap& headers,
                                             bool insert_envoy_original_path) const {
@@ -967,19 +967,25 @@ VirtualHostImpl::VirtualHostImpl(const envoy::api::v2::route::VirtualHost& virtu
   }
 
   for (const auto& route : virtual_host.routes()) {
-    const bool has_prefix =
-        route.match().path_specifier_case() == envoy::api::v2::route::RouteMatch::kPrefix;
-    const bool has_path =
-        route.match().path_specifier_case() == envoy::api::v2::route::RouteMatch::kPath;
-    const bool has_regex =
-        route.match().path_specifier_case() == envoy::api::v2::route::RouteMatch::kRegex;
-    if (has_prefix) {
-      routes_.emplace_back(new PrefixRouteEntryImpl(*this, route, factory_context));
-    } else if (has_path) {
-      routes_.emplace_back(new PathRouteEntryImpl(*this, route, factory_context));
-    } else {
-      ASSERT(has_regex);
-      routes_.emplace_back(new RegexRouteEntryImpl(*this, route, factory_context));
+    switch (route.match().path_specifier_case()) {
+      case envoy::api::v2::route::RouteMatch::kPrefix: {
+        routes_.emplace_back(new PrefixRouteEntryImpl(*this, route, factory_context));
+        break;
+      }
+      case envoy::api::v2::route::RouteMatch::kPath: {
+        routes_.emplace_back(new PathRouteEntryImpl(*this, route, factory_context));
+        break;
+      }
+      case envoy::api::v2::route::RouteMatch::kRegex: {
+        routes_.emplace_back(new RegexRouteEntryImpl(*this, route, factory_context));
+        break;
+      }
+      case envoy::api::v2::route::RouteMatch::kSafeRegex: {
+        ASSERT(false); // fixfix
+        break;
+      }
+      case envoy::api::v2::route::RouteMatch::PATH_SPECIFIER_NOT_SET:
+        NOT_REACHED_GCOVR_EXCL_LINE;
     }
 
     if (validate_clusters) {
@@ -1004,7 +1010,7 @@ VirtualHostImpl::VirtualHostImpl(const envoy::api::v2::route::VirtualHost& virtu
 
 VirtualHostImpl::VirtualClusterEntry::VirtualClusterEntry(
     const envoy::api::v2::route::VirtualCluster& virtual_cluster, Stats::StatNamePool& pool)
-    : pattern_(RegexUtil::parseRegex(virtual_cluster.pattern())),
+    : pattern_(Regex::Utility::parseRegex(virtual_cluster.pattern())),
       stat_name_(pool.add(virtual_cluster.name())) {
   if (virtual_cluster.method() != envoy::api::v2::core::RequestMethod::METHOD_UNSPECIFIED) {
     method_ = envoy::api::v2::core::RequestMethod_Name(virtual_cluster.method());

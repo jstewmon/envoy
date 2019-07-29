@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package envoy.type.matcher;
+
+option java_outer_classname = "StringProto";
+option java_multiple_files = true;
+option java_package = "io.envoyproxy.envoy.type.matcher";
+option go_package = "matcher";
+
+import "validate/validate.proto";
+
+// [#protodoc-title: SafeRegexMatcher]
+
+// fixfix
+message SafeRegexMatcher {
+  // fixfix
+  message GoogleReEngine {
+  }
+
+  oneof engine_type {
+    option (validate.required) = true;
+
+    // fixfix
+    GoogleReEngine google_re_engine = 1 [(validate.rules).message.required = true];
+  }
+
+  // fixfix
+  string regex = 2 [(validate.rules).string.min_bytes = 1];
+}

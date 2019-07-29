@@ -32,7 +32,10 @@ HeaderUtility::HeaderData::HeaderData(const envoy::api::v2::route::HeaderMatcher
     break;
   case envoy::api::v2::route::HeaderMatcher::kRegexMatch:
     header_match_type_ = HeaderMatchType::Regex;
-    regex_pattern_ = RegexUtil::parseRegex(config.regex_match());
+    //fixfixregex_pattern_ = Regex::Utility::parseRegex(config.regex_match());
+    break;
+  case envoy::api::v2::route::HeaderMatcher::kSafeRegexMatch:
+    ASSERT(false); // fixfix
     break;
   case envoy::api::v2::route::HeaderMatcher::kRangeMatch:
     header_match_type_ = HeaderMatchType::Range;

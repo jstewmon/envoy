@@ -175,6 +175,15 @@ envoy_cc_library(
 )
 
 envoy_cc_library(
+    name = "regex_lib",
+    srcs = ["regex.cc"],
+    hdrs = ["regex.h"],
+    deps = [
+        "@com_googlesource_code_re2//:re2",
+    ],
+)
+
+envoy_cc_library(
     name = "non_copyable",
     hdrs = ["non_copyable.h"],
 )

@@ -32,10 +32,10 @@ public:
   // equivalent of the QueryParameterMatcher proto in the RDS v2 API.
   class QueryParameterMatcher {
   public:
-    QueryParameterMatcher(const envoy::api::v2::route::QueryParameterMatcher& config)
-        : name_(config.name()), value_(config.value()),
+    QueryParameterMatcher(const envoy::api::v2::route::QueryParameterMatcher& config);
+        /*: name_(config.name()), value_(config.value()),
           is_regex_(PROTOBUF_GET_WRAPPED_OR_DEFAULT(config, regex, false)),
-          regex_pattern_(is_regex_ ? RegexUtil::parseRegex(value_) : std::regex()) {}
+          regex_pattern_(is_regex_ ? Regex::Utility::parseRegex(value_) : std::regex()) {}fixfix*/
 
     /**
      * Check if the query parameters for a request contain a match for this

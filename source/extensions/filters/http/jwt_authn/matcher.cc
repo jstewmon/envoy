@@ -113,7 +113,7 @@ private:
 class RegexMatcherImpl : public BaseMatcherImpl {
 public:
   RegexMatcherImpl(const RequirementRule& rule)
-      : BaseMatcherImpl(rule), regex_(RegexUtil::parseRegex(rule.match().regex())),
+      : BaseMatcherImpl(rule), regex_(Regex::Utility::parseRegex(rule.match().regex())),
         regex_str_(rule.match().regex()) {}
 
   bool matches(const Http::HeaderMap& headers) const override {

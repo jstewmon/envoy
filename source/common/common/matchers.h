@@ -11,6 +11,8 @@
 #include "common/common/utility.h"
 #include "common/protobuf/protobuf.h"
 
+//fixfix#include "re2/re2.h"
+
 namespace Envoy {
 namespace Matchers {
 
@@ -72,11 +74,14 @@ private:
 
 class StringMatcher : public ValueMatcher {
 public:
-  StringMatcher(const envoy::type::matcher::StringMatcher& matcher) : matcher_(matcher) {
+  StringMatcher(const envoy::type::matcher::StringMatcher& matcher);/* : matcher_(matcher) {
     if (matcher.match_pattern_case() == envoy::type::matcher::StringMatcher::kRegex) {
-      regex_ = RegexUtil::parseRegex(matcher_.regex());
-    }
-  }
+      regex_ = Regex::Utility::parseRegex(matcher_.regex());
+    }fixfix
+
+    // fixfix
+    ASSERT(matcher.match_pattern_case() != envoy::type::matcher::StringMatcher::kSafeRegex);
+  }*/
 
   bool match(const absl::string_view value) const;
 
@@ -84,7 +89,7 @@ public:
 
 private:
   const envoy::type::matcher::StringMatcher matcher_;
-  std::regex regex_;
+  std::regex regex_; // fixfix
 };
 
 class LowerCaseStringMatcher : public ValueMatcher {

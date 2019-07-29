@@ -9,6 +9,8 @@ option go_package = "route";
 option java_generic_services = true;
 
 import "envoy/api/v2/core/base.proto";
+import "envoy/type/matcher/safe_regex.proto";
+import "envoy/type/matcher/string.proto";
 import "envoy/type/percent.proto";
 import "envoy/type/range.proto";
 
@@ -350,6 +352,9 @@ message RouteMatch {
     // * The regex */b[io]t* does not match the path */bite*
     // * The regex */b[io]t* does not match the path */bit/bot*
     string regex = 3 [(validate.rules).string.max_bytes = 1024];
+
+    // fixfix
+    type.matcher.SafeRegexMatcher safe_regex = 10 [(validate.rules).message.required = true];
   }
 
   // Indicates that prefix/path matching should be case insensitive. The default
@@ -410,6 +415,9 @@ message CorsPolicy {
   //
   // An origin is allowed if either allow_origin or allow_origin_regex match.
   repeated string allow_origin_regex = 8 [(validate.rules).repeated .items.string.max_bytes = 1024];
+
+  // fixfix
+  repeated type.matcher.SafeRegexMatcher allow_origin_safe_regex = 11;
 
   // Specifies the content for the *access-control-allow-methods* header.
   string allow_methods = 2;
@@ -1274,6 +1282,9 @@ message HeaderMatcher {
     // * The regex *\d{3}* does not match the value *123.456*
     string regex_match = 5 [(validate.rules).string.max_bytes = 1024];
 
+    // fixfix
+    type.matcher.SafeRegexMatcher safe_regex_match = 11;
+
     // If specified, header match will be performed based on range.
     // The rule will match if the request header value is within this range.
     // The entire request header value must represent an integer in base 10 notation: consisting of
@@ -1334,4 +1345,9 @@ message QueryParameterMatcher {
   // the right of the equals sign in "key=value") must match the regex.
   // E.g., the regex "\d+$" will match "123" but not "a123" or "123a".
   google.protobuf.BoolValue regex = 4;
+
+  oneof query_parameter_match_specifier {
+    // fixfix
+    type.matcher.StringMatcher string_matcher = 5;
+  }
 }

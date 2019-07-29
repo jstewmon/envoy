@@ -401,17 +401,17 @@ TEST(Primes, findPrimeLargerThan) {
   EXPECT_EQ(10007, Primes::findPrimeLargerThan(9991));
 }
 
-TEST(RegexUtil, parseRegex) {
-  EXPECT_THROW_WITH_REGEX(RegexUtil::parseRegex("(+invalid)"), EnvoyException,
+TEST(Regex::Utility, parseRegex) {
+  EXPECT_THROW_WITH_REGEX(Regex::Utility::parseRegex("(+invalid)"), EnvoyException,
                           "Invalid regex '\\(\\+invalid\\)': .+");
 
   {
-    std::regex regex = RegexUtil::parseRegex("x*");
+    std::regex regex = Regex::Utility::parseRegex("x*");
     EXPECT_NE(0, regex.flags() & std::regex::optimize);
   }
 
   {
-    std::regex regex = RegexUtil::parseRegex("x*", std::regex::icase);
+    std::regex regex = Regex::Utility::parseRegex("x*", std::regex::icase);
     EXPECT_NE(0, regex.flags() & std::regex::icase);
     EXPECT_EQ(0, regex.flags() & std::regex::optimize);
   }

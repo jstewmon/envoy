@@ -499,16 +499,6 @@ uint32_t Primes::findPrimeLargerThan(uint32_t x) {
   return x;
 }
 
-std::regex RegexUtil::parseRegex(const std::string& regex, std::regex::flag_type flags) {
-  // TODO(zuercher): In the future, PGV (https://github.com/lyft/protoc-gen-validate) annotations
-  // may allow us to remove this in favor of direct validation of regular expressions.
-  try {
-    return std::regex(regex, flags);
-  } catch (const std::regex_error& e) {
-    throw EnvoyException(fmt::format("Invalid regex '{}': {}", regex, e.what()));
-  }
-}
-
 // https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Online_algorithm
 void WelfordStandardDeviation::update(double newValue) {
   ++count_;
